@@ -4,19 +4,8 @@ import { CharacterContext } from "../contexts/CharacterContext";
 import Character from "../types/Character";
 
 interface CharacterServiceProps {
-  children: React.ReactNode;
-  characters: Character[];
-  isLoading: boolean;
-  error?: null | Error
+  children: React.ReactNode
 }
-
-interface CharacterWithExtras extends Character {
-  [key: string]: unknown; // Allows for unknown properties
-}
-interface Props {
-  children?: ReactNode
-  // any props that come into the component
-};
 
 interface CharacterContextData {
   characters: Character[];
@@ -25,25 +14,32 @@ interface CharacterContextData {
   fetchCharacters: (page?: number) => Promise<void>;
 }
 
-export const CharacterService: React.FC<Props> = ({ children, ...props }) => {
+export const CharacterService: React.FC<CharacterServiceProps> = ({ children }) => {
   const [characters, setCharacters] = useState<Character[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<null | Error>(null);
 
   const baseURL = 'https://swapi.dev/api/';
 
-  const fetchCharacters = async (page: number | undefined) => {
+  const fetchCharacters = async (page?: number) => {
     setIsLoading(true);
-    setError(null); // Clear previous errors
+    setError(null);
+    console.log('fetching: ' + page);
     try {
       let url = baseURL + 'people';
-      if( page ) {
+      if (page) {
         url = baseURL + 'people?page=' + page;
-      } 
-      
+      }
+       
+
       const response = await axios.get(url);
-      setCharacters(response.data.results); // Update characters
+      setCharacters(response.data.results);
+      console.log(response.data);
+      return response.data;
+     
     } catch (error) {
+      setError(error as Error | null);
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -53,14 +49,12 @@ export const CharacterService: React.FC<Props> = ({ children, ...props }) => {
     characters,
     isLoading,
     error,
-    fetchCharacters,
+    fetchCharacters
   };
 
-
   return (
-      <CharacterContext.Provider value={{ characters, isLoading, error, fetchCharacters }}>
-        {children}
-      </CharacterContext.Provider>
+    <CharacterContext.Provider value={characterContextData}>
+      {children}
+    </CharacterContext.Provider>
   );
-};
-
+}

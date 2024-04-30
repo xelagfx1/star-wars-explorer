@@ -1,65 +1,54 @@
-import React, { useEffect, useState, useContext } from "react";
-import axios from "axios";
-import {
-    useQuery,
-    QueryClient,
-    keepPreviousData,
-  } from '@tanstack/react-query';
-import Character from "../types/Character";
-import CharacterCard from "./CharacterCard";
-import { CharacterContext } from "../contexts/CharacterContext";
+import React, { useEffect, useContext, useState } from 'react';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { CharacterContext } from '../contexts/CharacterContext';
+import CharacterCard from './CharacterCard';
 
 export default function CharacterDatabase() {
-    const [page, setPage] = useState(1);
     const { fetchCharacters, characters } = useContext(CharacterContext);
+    const [page, setPage] = useState(1);
+    useEffect(() => {
+        
+    }, []);
 
     const { isPending = false, error, data = [], isFetching, isPlaceholderData } = useQuery<any>({
         queryKey: ['fetchCharacters', page],
-        queryFn: () => fetchCharacters(),
+        queryFn: () => fetchCharacters(page),
         placeholderData: keepPreviousData,
     });
+  
 
-   
+    const handlePageChange = (newPage: number) => {
+        setPage(newPage);
+    };
 
-    useEffect(() => {
-        fetchCharacters();
-    }, [fetchCharacters]);
-    
-    return isPending ? (
+    return (
+    <>
+      {isPending ? (
         <p>Loading characters...</p>
       ) : (
         <>
-        <div className="characterTable">
-            {isPending && <p>Loading characters...</p>}
-            {error && <p>Error: {error?.message}</p>}
-            
-            <div style={{ display: 'flex', flexWrap: 'wrap', } }>
-                {characters?.map((char: any) => (
-                    <CharacterCard key={char.name} character={char} />
-                ))}
-            </div>
-            
-            <span>Current Page: {page}</span>
-            <button
-                onClick={() => setPage((old) => Math.max(old - 1, 0))}
-                disabled={page === 1}
-            >
-                Previous Page
-            </button>{' '}
-            <button
-                onClick={() => {
-                if (!isPlaceholderData && data.next) {
-                    setPage((old) => old + 1)
-                }
-                }}
-                // Disable the Next Page button until we know a next page is available
-                disabled={isPlaceholderData || !data?.next}
-            >
-                Next Page
+          <div style={{ display: 'flex', flexWrap: 'wrap' }}>
+            {characters?.map((char: any) => (
+              <CharacterCard key={char.name} character={char} />
+            ))}
+          </div>
+            <p>{data?.next}</p>
+          <span>Current Page: {page}</span>
+            <button onClick={() => handlePageChange(page - 1)} disabled={page === 1}>
+            Previous Page
             </button>
-                
-            </div>
+            <button
+            onClick={() => {
+                if (!isPlaceholderData && data?.next) {
+                handlePageChange(page + 1);
+                }
+            }}
+            disabled={isPlaceholderData || !data?.next}
+            >
+            Next Page 
+            </button>
         </>
-      );
-      
+      )}
+    </>
+  );
 }
