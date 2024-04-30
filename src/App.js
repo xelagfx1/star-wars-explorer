@@ -1,15 +1,18 @@
 import logo from './logo.svg';
 import './App.css';
 import React from 'react';
-import CharacterDatabase from './components/CharacterDatabase';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
+import { CharacterService } from './services/CharacterService'; 
+import CharacterDatabase from './components/CharacterDatabase';
 
 function App() {
   const queryClient = new QueryClient;
   return (
     <div className="App">
       <QueryClientProvider client={queryClient}>
-        <CharacterDatabase />
+        <CharacterService>
+          <CharacterDatabase />
+        </CharacterService>
       </QueryClientProvider>
       
     </div>

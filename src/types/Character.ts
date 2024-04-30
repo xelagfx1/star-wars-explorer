@@ -1,5 +1,6 @@
 export default interface Character {
     id?: any | null,
     name: string,
-    age?: string
+    birth_year?: string,
+    gender?: string
   }
