@@ -1,0 +1,22 @@
+
+.databaseWrap {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 85%;
+    margin: 0 auto;
+}
+
+.pageBtn {
+    background-color: #444B6E;
+    color: white;
+    padding: 5px 10px;
+    border: 2px solid #3D315B;
+    border-right: 0;
+    cursor: pointer;
+}
+
+.pageBtn:disabled {
+    background-color: #939393;
+    border: 2px solid #bcbcbc;
+}

@@ -24,7 +24,6 @@ export const CharacterService: React.FC<CharacterServiceProps> = ({ children }) 
   const fetchCharacters = async (page?: number) => {
     setIsLoading(true);
     setError(null);
-    console.log('fetching: ' + page);
     try {
       let url = baseURL + 'people';
       if (page) {
@@ -34,7 +33,6 @@ export const CharacterService: React.FC<CharacterServiceProps> = ({ children }) 
 
       const response = await axios.get(url);
       setCharacters(response.data.results);
-      console.log(response.data);
       return response.data;
      
     } catch (error) {
